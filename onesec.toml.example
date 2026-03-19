@@ -1,0 +1,22 @@
+# onesec.toml.example — copy to onesec.toml and customize
+
+[output]
+clip_duration           = 1.0    # seconds per output clip
+segment_duration        = null   # analysis window (null = same as clip_duration)
+max_duration            = 60.0   # max total highlight length in seconds
+top_n                   = null   # fixed clip count (null = use max_duration)
+transition              = "cut"  # cut | crossfade | dip-to-black
+merge_gap_threshold     = 0.5    # merge segments closer than this (seconds)
+
+[device]
+device = "auto"  # auto | cpu | cuda | mps
+
+[parallelism]
+workers = null  # null = os.cpu_count()
+
+[analyzers]
+scene   = { enabled = true,  weight = 0.3 }
+audio   = { enabled = true,  weight = 0.4 }
+motion  = { enabled = true,  weight = 0.3 }
+clip    = { enabled = false, weight = 0.5 }
+whisper = { enabled = false, weight = 0.4, options = { model = "base" } }
