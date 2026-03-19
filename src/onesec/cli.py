@@ -10,6 +10,8 @@ from rich.table import Table
 
 from onesec import Pipeline
 from onesec.analyzer.base import Analyzer
+from onesec.analyzer.audio import AudioAnalyzer
+from onesec.analyzer.motion import MotionAnalyzer
 from onesec.analyzer.scene import SceneAnalyzer
 from onesec.config import load_config
 
@@ -18,6 +20,8 @@ console = Console()
 
 _BUILTIN_ANALYZERS: dict[str, type[Analyzer]] = {
     "scene": SceneAnalyzer,
+    "audio": AudioAnalyzer,
+    "motion": MotionAnalyzer,
 }
 
 
@@ -117,7 +121,9 @@ def analyzers_list() -> None:
     table = Table(title="Available Analyzers")
     for col in ["name", "level", "gpu", "available", "description"]:
         table.add_column(col)
-    table.add_row("scene", "1", "No", "✓", "Histogram-based scene change")
+    table.add_row("scene",  "1", "No", "✓", "Histogram-based scene change")
+    table.add_row("audio",  "1", "No", "?" if not AudioAnalyzer().is_available() else "✓", "Librosa energy + VAD")
+    table.add_row("motion", "1", "No", "✓", "Optical flow magnitude")
     console.print(table)
 
 

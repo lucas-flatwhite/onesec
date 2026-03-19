@@ -4,6 +4,8 @@ import tempfile
 from pathlib import Path
 
 from onesec.analyzer.base import Analyzer
+from onesec.analyzer.audio import AudioAnalyzer
+from onesec.analyzer.motion import MotionAnalyzer
 from onesec.analyzer.scene import SceneAnalyzer
 from onesec.editor.composer import Composer
 from onesec.editor.extractor import Extractor
@@ -13,18 +15,24 @@ from onesec.selector import Selector
 
 # v0.1: sequential analysis only.
 # v0.3 will add ProcessPoolExecutor for CPU analyzers and GPU Semaphore for ML analyzers.
-DEFAULT_ANALYZERS = ["scene"]  # v0.2 will add audio, motion
+DEFAULT_ANALYZERS = ["scene", "audio", "motion"]
 
 
 def _build_default_analyzers(config: Config) -> list[Analyzer]:
-    available = {"scene": SceneAnalyzer}
+    available = {
+        "scene": SceneAnalyzer,
+        "audio": AudioAnalyzer,
+        "motion": MotionAnalyzer,
+    }
     result = []
     for name, cls in available.items():
         ac = config.analyzers.get(name)
         if ac is not None and not ac.enabled:
             continue
         weight = ac.weight if ac else 1.0
-        result.append(cls(weight=weight))
+        a = cls(weight=weight)
+        if a.is_available():
+            result.append(a)
     return result
 
 
