@@ -1,6 +1,6 @@
 [project]
 name = "onesec"
-version = "0.1.0"
+version = "0.3.0"
 description = "Automatically picks the most interesting 1-second moments from a folder of videos and stitches them into a highlight montage."
 readme = "README.md"
 requires-python = ">=3.12"

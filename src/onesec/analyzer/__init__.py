@@ -20,6 +20,6 @@ __all__ = [
     "SceneAnalyzer",
     "AudioAnalyzer",
     "MotionAnalyzer",
-    *( ["ClipScorer"] if "ClipScorer" in dir() else []),
-    *( ["WhisperAnalyzer"] if "WhisperAnalyzer" in dir() else []),
+    *( ["ClipScorer"] if "ClipScorer" in globals() else []),
+    *( ["WhisperAnalyzer"] if "WhisperAnalyzer" in globals() else []),
 ]
