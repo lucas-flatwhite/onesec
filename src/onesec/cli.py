@@ -15,6 +15,18 @@ from onesec.analyzer.motion import MotionAnalyzer
 from onesec.analyzer.scene import SceneAnalyzer
 from onesec.config import load_config
 
+try:
+    from onesec.analyzer.clip_scorer import ClipScorer
+    _HAVE_CLIP = True
+except ImportError:
+    _HAVE_CLIP = False
+
+try:
+    from onesec.analyzer.whisper import WhisperAnalyzer
+    _HAVE_WHISPER = True
+except ImportError:
+    _HAVE_WHISPER = False
+
 app = typer.Typer(help="onesec — automatic video highlight editor")
 console = Console()
 
@@ -22,6 +34,8 @@ _BUILTIN_ANALYZERS: dict[str, type[Analyzer]] = {
     "scene": SceneAnalyzer,
     "audio": AudioAnalyzer,
     "motion": MotionAnalyzer,
+    **({"clip": ClipScorer} if _HAVE_CLIP else {}),
+    **({"whisper": WhisperAnalyzer} if _HAVE_WHISPER else {}),
 }
 
 
@@ -124,6 +138,10 @@ def analyzers_list() -> None:
     table.add_row("scene",  "1", "No", "✓", "Histogram-based scene change")
     table.add_row("audio",  "1", "No", "?" if not AudioAnalyzer().is_available() else "✓", "Librosa energy + VAD")
     table.add_row("motion", "1", "No", "✓", "Optical flow magnitude")
+    clip_avail = "✓" if (_HAVE_CLIP and ClipScorer().is_available()) else "✗"
+    table.add_row("clip",   "2", "Yes", clip_avail, "CLIP embedding scorer (pip install onesec[clip])")
+    wh_avail = "✓" if (_HAVE_WHISPER and WhisperAnalyzer().is_available()) else "✗"
+    table.add_row("whisper","2", "Yes", wh_avail,   "faster-whisper STT (pip install onesec[whisper])")
     console.print(table)
 
 
