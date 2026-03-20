@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import math
-from pathlib import Path
 
 from onesec.analyzer.base import Analyzer
 from onesec.models import ScoredSegment, VideoFile
@@ -122,3 +121,4 @@ class ClipScorer(Analyzer):
         self._model = None
         self._preprocess = None
         self._tokenizer = None
+        self._device = None
