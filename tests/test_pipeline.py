@@ -35,3 +35,29 @@ def test_run_convenience(synthetic_video, tmp_path):
 def test_pipeline_default_analyzers():
     p = Pipeline()
     assert len(p._analyzers) > 0
+
+
+def test_pipeline_cpu_analyzers_run(synthetic_video, tmp_path):
+    """CPU analyzers execute and return segments (parallel path)."""
+    from onesec.analyzer.scene import SceneAnalyzer
+    from onesec.analyzer.motion import MotionAnalyzer
+    p = Pipeline(
+        analyzers=[SceneAnalyzer(), MotionAnalyzer()],
+        clip_duration=1.0,
+        max_duration=10.0,
+    )
+    segments = p.analyze(synthetic_video.parent)
+    assert isinstance(segments, list)
+
+
+def test_pipeline_close_is_safe():
+    """Pipeline.close() must not raise even with no GPU analyzers."""
+    p = Pipeline(clip_duration=1.0)
+    p.close()  # should not raise
+
+
+def test_pipeline_context_manager_calls_close(synthetic_video):
+    """__exit__ calls close() without error."""
+    with Pipeline(clip_duration=1.0) as p:
+        p.analyze(synthetic_video.parent)
+    # No exception = pass
