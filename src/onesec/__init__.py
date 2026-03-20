@@ -33,7 +33,7 @@ def _probe_video(video_path: Path) -> VideoFile:
     return VideoFile(path=video_path, duration=duration, fps=fps, has_audio=has_audio)
 
 
-def _analyze_video_cpu(args: tuple) -> list[ScoredSegment]:
+def _analyze_video_cpu(args: tuple[Analyzer, VideoFile, float]) -> list[ScoredSegment]:
     """Top-level function required by ProcessPoolExecutor (must be module-level for pickling).
 
     args: (analyzer, video_file, segment_duration)
@@ -43,7 +43,6 @@ def _analyze_video_cpu(args: tuple) -> list[ScoredSegment]:
     try:
         return analyzer.score_segments(video_file, segment_duration)
     except Exception as e:
-        import warnings
         warnings.warn(f"{analyzer.name} failed on {video_file.path}: {e}")
         return []
 
